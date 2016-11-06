@@ -1,7 +1,7 @@
+#!/usr/bin/python2
+__author__ = 'marcos'
 import sys
 import time
-
-__author__ = 'marcos'
 import re
 import smtplib
 import pandas as pd
@@ -39,7 +39,7 @@ class SendEmail:
                 time.sleep(delay)
     """
     execfile("send_email.py")
-    SendEmail.send_email("CFP.txt", "admin@fit.edu", ["moliveira@biocomplex.com", "mrcs.jr@gmail.com", "moliveirajun2013@my.fit.edu"], batch_size=1)
+    SendEmail.send_email("CFP.txt", "admin@fit.edu", ["email1@host.com", "email2@host.com"], subject="Call for papers", batch_size=1)
     """
 
     @staticmethod
@@ -53,7 +53,7 @@ class SendEmail:
         SendEmail.send_email(message_file_name, sender, recipients, replaces=replaces, **kargs)
     """
     execfile("send_email.py")
-    SendEmail.construct_email_and_send("CFP.txt", "full_emaillist.csv", "no-reply@fit.edu", subject="hola")
+    SendEmail.construct_email_and_send("CFP.txt", "full_emaillist.csv", "no-reply@fit.edu", subject="Call for papers")
     """
 
 if __name__ == '__main__':
