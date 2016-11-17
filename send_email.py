@@ -1,5 +1,4 @@
-#!/usr/bin/python2
-__author__ = 'marcos'
+#!/usr/bin/python2.7
 import sys
 import time
 import re
@@ -60,15 +59,15 @@ if __name__ == '__main__':
     if len(sys.argv[1:]) < 6:
         print 'Usage:\n\t$ send_email.py message.txt recipient.csv sender@email.com "subject" delay batch_size'
     else:
-        message_file_name, recipients_file_name, sender, subject, delay, batch_size = sys.argv[1:]
-        delay, batch_size = int(delay), int(batch_size)
+        message_file_name_, recipients_file_name_, sender_, subject_, delay_, batch_size_ = sys.argv[1:]
+        delay_, batch_size_ = int(delay_), int(batch_size_)
         print "We are going to send some e-mails now..."
-        print " from: '%s' " % sender
-        print " to: '%s' " % recipients_file_name
-        print " subject: '%s' " % subject
-        print " message file: '%s' " % message_file_name
-        print "using a delay of %d seconds between batches of %d" % (delay, batch_size)
+        print " from: '%s' " % sender_
+        print " to: '%s' " % recipients_file_name_
+        print " subject: '%s' " % subject_
+        print " message file: '%s' " % message_file_name_
+        print "using a delay of %d seconds between batches of %d" % (delay_, batch_size_)
         SendEmail.construct_email_and_send(
-            message_file_name, recipients_file_name, sender, subject=subject, delay=delay, batch_size=batch_size)
+            message_file_name_, recipients_file_name_, sender_, subject=subject_, delay=delay_, batch_size=batch_size_)
 
 
