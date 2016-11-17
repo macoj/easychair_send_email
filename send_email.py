@@ -58,6 +58,8 @@ class SendEmail:
 if __name__ == '__main__':
     if len(sys.argv[1:]) < 6:
         print 'Usage:\n\t$ send_email.py message.txt recipient.csv sender@email.com "subject" delay batch_size'
+        print " 'message.txt' might contain variables with the same name of the columns in 'recipient.csv', so" \
+              "  it will be replaced by the respective values."
     else:
         message_file_name_, recipients_file_name_, sender_, subject_, delay_, batch_size_ = sys.argv[1:]
         delay_, batch_size_ = int(delay_), int(batch_size_)
