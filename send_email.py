@@ -31,7 +31,7 @@ class SendEmail:
             content['From'] = sender
             content['To'] = recipient
             content['Subject'] = subject
-            print "Sending to (%d/%d): %s" % (recipient_i, len(recipients), recipient)
+            print "Sending to (%d/%d): '%s'" % (recipient_i, len(recipients), recipient)
             if not dry_run:
                 mail_man = smtplib.SMTP(smtp_host)
                 mail_man.sendmail(mail_man, [recipient], content.as_string())
