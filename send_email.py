@@ -13,26 +13,29 @@ class SendEmail:
 
     @staticmethod
     def send_email(message_file_name, sender, recipients, subject=None, replaces=None,
-                   delay=2, batch_size=50, smtp_host='smtphost.fit.edu'):
+                   delay=2, batch_size=50, smtp_host='smtphost.fit.edu', dry_run=False):
         message_file = open(message_file_name, 'rb')
         message = message_file.read()
         message_file.close()
         if subject is None:
             subject = '(no subject)'
         for recipient_i in range(0, len(recipients)):
+            recipient = recipients[recipient_i]
+            print "Constructing e-mail to (%d/%d): %s" % (recipient_i, len(recipients), recipient)
             message_i = message
             if replaces is not None:
                 for replace in replaces:
+                    print " > replacing '%s' with '%s'" % (replace[0], replace[1][recipient_i])
                     message_i = re.sub(re.escape(replace[0]), replace[1][recipient_i], message_i)
-            recipient = recipients[recipient_i]
             content = MIMEText(message_i)
             content['From'] = sender
             content['To'] = recipient
             content['Subject'] = subject
-            mail_man = smtplib.SMTP(smtp_host)
             print "Sending to (%d/%d): %s" % (recipient_i, len(recipients), recipient)
-            mail_man.sendmail(mail_man, [recipient], content.as_string())
-            mail_man.quit()
+            if not dry_run:
+                mail_man = smtplib.SMTP(smtp_host)
+                mail_man.sendmail(mail_man, [recipient], content.as_string())
+                mail_man.quit()
             if (recipient_i + 1) % batch_size == 0:
                 print " waiting %d seconds " % delay
                 time.sleep(delay)
@@ -47,7 +50,7 @@ class SendEmail:
         recipients_data = pd.read_csv(recipients_file_name)
         recipients = list(recipients_data['email'])
         if replaces is not None:
-            replaces_names = [c for c in recipients_data.columns if c != "email"]
+            replaces_names = [c for c in replaces if c != "email"]
             replaces = zip(replaces_names, [list(recipients_data[replace_name]) for replace_name in replaces_names])
         SendEmail.send_email(message_file_name, sender, recipients, replaces=replaces, **kargs)
     """
@@ -61,15 +64,20 @@ if __name__ == '__main__':
         print " 'message.txt' might contain variables with the same name of the columns in 'recipient.csv', so" \
               "  it will be replaced by the respective values."
     else:
-        message_file_name_, recipients_file_name_, sender_, subject_, delay_, batch_size_ = sys.argv[1:]
-        delay_, batch_size_ = int(delay_), int(batch_size_)
+        message_file_name, recipients_file_name, sender, subject, delay, batch_size = sys.argv[1:7]
+        delay, batch_size = int(delay), int(batch_size)
+        if len(sys.argv) > 7:
+            replaces = sys.argv[7:]
+        else:
+            replaces = None
         print "We are going to send some e-mails now..."
-        print " from: '%s' " % sender_
-        print " to: '%s' " % recipients_file_name_
-        print " subject: '%s' " % subject_
-        print " message file: '%s' " % message_file_name_
-        print "using a delay of %d seconds between batches of %d" % (delay_, batch_size_)
-        SendEmail.construct_email_and_send(
-            message_file_name_, recipients_file_name_, sender_, subject=subject_, delay=delay_, batch_size=batch_size_)
+        print " from: '%s' " % sender
+        print " to: '%s' " % recipients_file_name
+        print " subject: '%s' " % subject
+        print " message file: '%s' " % message_file_name
+        print " replacing: " + str(replaces)
+        print "using a delay of %d seconds between batches of %d" % (delay, batch_size)
 
+        SendEmail.construct_email_and_send(
+            message_file_name, recipients_file_name, sender, subject=subject, delay=delay, batch_size=batch_size, replaces=replaces)
 
